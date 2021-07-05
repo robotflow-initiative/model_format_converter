@@ -28,7 +28,7 @@ export PATH="/path/to/blender/executable:$PATH"
 ```python
 from model_format_converter.converter import Converter
 
-converter = Converter(input_file="/path/to/input/file/or/dir", to_format="fbx", urdf_tmp_path="/tmp.pickle", blender_vis=False)
+converter = Converter(input_file="/path/to/input/file/or/dir", to_format="fbx", urdf_tmp_path="/tmp.pickle", blender_vis=False, delete_tmp_after=True)
 converter.convert()
 ```
 + Convert Other Format
