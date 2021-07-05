@@ -1,6 +1,6 @@
 import os
 import argparse
-from .no_blender_scripts import obj2urdf, xacro2urdf
+from model_format_converter.no_blender_scripts import obj2urdf, xacro2urdf
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Model format conversion')
@@ -21,6 +21,16 @@ def parse_args():
     if args.output_file is not None and args.output_dir is not None:
         raise argparse.ArgumentError("output_file and output_dir cannot be simutaneously set, currently\
                                     output_file is {}, output_dir is {}".format(args.output_file, args.output_dir))
+    if args.from_format is None:
+        print("from_format is not specified...")
+        if args.input_dir is not None:
+            print("automatically infer from format is only supported for single file.")
+            raise
+        else:
+            print("it will automatically inferred.")
+            args.from_format = args.input_file.split(".")[-1].lower()
+            print("the detected format is ", args.from_format)
+            
     convert_dict = {"obj":["fbx", "dae", "urdf"], "urdf":["fbx", "dae"], "xacro":["urdf"]}
     if args.from_format not in convert_dict.keys():
         raise argparse.ArgumentError("from format {} is currently not supported.".format(args.from_format))
@@ -56,6 +66,7 @@ def no_blender_function_call(args, func=None):
 def main():
     args = parse_args()
 
+    print(args)
     # handle blender scripts
     if args.from_format == "obj":
         if args.to_format in ['fbx', 'dae']:

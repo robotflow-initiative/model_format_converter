@@ -8,12 +8,12 @@ import xml.etree.ElementTree as ET
 
 
 class ObjectUrdfBuilder:
-    def __init__(self, object_folder="", log_file ="vhacd_log.txt", urdf_prototype='_prototype.urdf'):
-        self.object_folder = os.path.abspath(object_folder)
+    def __init__(self, log_file ="vhacd_log.txt", urdf_prototype='_prototype.urdf'):
         self.log_file = os.path.abspath(log_file)
-        self.suffix = "vhacd"
+        self.vhacd_suffix = "vhacd"
 
-        self.urdf_base = self._read_xml(os.path.join(object_folder,urdf_prototype))
+        current_dir = os.path.dirname(__file__)
+        self.urdf_base = self._read_xml(os.path.join(current_dir, urdf_prototype))
 
 
     # Recursively get all files with a specific extension, excluding a certain suffix
@@ -218,8 +218,7 @@ class ObjectUrdfBuilder:
 
 
     # Save a URDF to a file
-    def save_urdf(self, new_urdf, filename, overwrite=False):
-        out_file = os.path.join(self.object_folder, filename)
+    def save_urdf(self, new_urdf, out_file, overwrite=False):
 
         # Do not overwrite the file unless the option is True
         if os.path.exists(out_file) and not overwrite:
@@ -232,22 +231,14 @@ class ObjectUrdfBuilder:
 
 
     # Build a URDF from an object file
-    def build_urdf(self, filename, output_folder=None,
-                   force_overwrite=False, decompose_concave=False, force_decompose=False, 
+    def build_urdf(self, filename, output_path,
+                   force_overwrite=True, decompose_concave=True, force_decompose=False, 
                    center = 'mass', **kwargs):
-
-        # If no output folder is specified, use the base object folder
-        if output_folder is None:
-            output_folder = self.object_folder
 
         # Generate a relative path from the output folder to the geometry files
         filename = os.path.abspath(filename)
-        common = os.path.commonprefix([output_folder,filename])
-        rel = os.path.join(filename.replace(common,''))
-        if rel[0]==os.path.sep:
-            rel = rel[1:] 
-        name= rel.split(os.path.sep)[0]
-        rel = rel.replace(os.path.sep,'/')
+        rel = filename.split(os.path.sep)[-1]
+        name= rel
 
         file_name_raw, file_extension = os.path.splitext(filename)
 
@@ -285,8 +276,8 @@ class ObjectUrdfBuilder:
                 raise ValueError("Your filetype needs to be an STL or OBJ to perform concave decomposition")
 
 
-            outfile=obj_filename.replace('.obj','_'+self.suffix+'.obj')
-            collision_file = visual_file.replace('.obj','_'+self.suffix+'.obj')
+            outfile=obj_filename.replace('.obj','_'+self.vhacd_suffix+'.obj')
+            collision_file = visual_file.replace('.obj','_'+self.vhacd_suffix+'.obj')
 
             # Only run a decomposition if one does not exist, or if the user forces an overwrite
             if not os.path.exists(outfile) or force_decompose:
@@ -296,36 +287,42 @@ class ObjectUrdfBuilder:
         else:
             urdf_out = self.update_urdf(rel, name, override=overrides, mass_center=mass_center)
         
-        self.save_urdf(urdf_out, name+'.urdf', force_overwrite)
+        self.save_urdf(urdf_out, output_path, force_overwrite)
 
 
     # Build the URDFs for all objects in your library.
-    def build_library(self, **kwargs):
+    def build_urdf_dir(self, input_dir, output_dir, **kwargs):
         print("\nFOLDER: %s"%(self.object_folder))
 
         # Get all OBJ files
-        obj_files  = self._get_files_recursively(self.object_folder, filter_extension='.obj', exclude_suffix=self.suffix)
-        stl_files  = self._get_files_recursively(self.object_folder, filter_extension='.stl', exclude_suffix=self.suffix)       
+        obj_files  = self._get_files_recursively(input_dir, filter_extension='.obj', exclude_suffix=self.vhacd_suffix)
+        stl_files  = self._get_files_recursively(input_dir, filter_extension='.stl', exclude_suffix=self.vhacd_suffix)       
 
         obj_folders=[]
         for root, _, full_file in obj_files:
             obj_folders.append(root)
-            self.build_urdf(full_file,**kwargs)
-
             common = os.path.commonprefix([self.object_folder,full_file])
             rel = os.path.join(full_file.replace(common,''))
             print('\tBuilding: %s'%(rel) )
+
+            urdf_name = ".".join(rel.split(".")[:-1])+".urdf"
+            self.build_urdf(full_file, os.path.join[output_dir, urdf_name], **kwargs)
+
+            
         
         for root, _, full_file in stl_files:
             if root not in obj_folders:
-                self.build_urdf(full_file,**kwargs)
-                
-                common = os.path.commonprefix([self.object_folder,full_file])
+                common = os.path.commonprefix([input_dir,full_file])
                 rel = os.path.join(full_file.replace(common,''))
                 print('Building: %s'%(rel) )
 
-def obj2urdf(input_path, output_path, dir_mode=False):
-    builder = ObjectUrdfBuilder()
+                urdf_name = ".".join(rel.split(".")[:-1])+".urdf"
+                self.build_urdf(full_file, os.path.join[output_dir, urdf_name], **kwargs)
+                
+                
+
+def obj2urdf(input_path, output_path, dir_mode=False, urdf_prototype="./_prototype.urdf"):
+    builder = ObjectUrdfBuilder(urdf_prototype)
     if dir_mode:
         builder.build_urdf_dir(input_path, output_path)
     else:

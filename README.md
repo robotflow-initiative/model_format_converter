@@ -7,8 +7,8 @@ URDF is an important file format regarding robot-related tasks. We build some to
 
 + [x] obj2fbx: blender required
 + [x] obj2dae: blender required
-+ [ ] obj2urdf
-+ [ ] xacro2urdf
++ [x] obj2urdf
++ [x] xacro2urdf
 + [ ] urdf2fbx: blender required
 + [ ] urdf2dae: blender required
 
@@ -39,3 +39,6 @@ python convert.py -f obj -t fbx -id /path/to/input/models -od /python/to/output/
 1. Run the individual convert code.
 
 2. Use a high-level python script to control non-blender scripts
+```
+python convert.py -t urdf -i xxx.obj
+```
