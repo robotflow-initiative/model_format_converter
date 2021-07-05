@@ -9,8 +9,8 @@ URDF is an important file format regarding robot-related tasks. We build some to
 + [x] obj2dae/dae2obj: blender required
 + [x] obj2urdf
 + [ ] xacro2urdf
-+ [ ] urdf2fbx: blender required
-+ [ ] urdf2dae: blender required
++ [x] urdf2fbx: blender required
++ [x] urdf2dae: blender required
 
 ## If blender required
 > usually a display is required, I have not make it work without a screen
