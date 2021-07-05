@@ -12,33 +12,29 @@ URDF is an important file format regarding robot-related tasks. We build some to
 + [x] urdf2fbx: blender required
 + [x] urdf2dae: blender required
 
-## If blender required
-> usually a display is required, I have not make it work without a screen
-1. Setup blender. Download blender from [here](https://www.blender.org/). Decompress it and move to a proper location.
+## Installation
+```
+python setup.py develop
+```
+
+## How to use
+1. Setup blende (For functionalities requires Blender). Download blender from [here](https://www.blender.org/). Decompress it and move to a proper location.
 ```
 # export the blender to path
 export PATH="/path/to/blender/executable:$PATH"
 ```
+2. Test with converter
++ Convert URDF to something else
+```python
+from model_format_converter.converter import Converter
 
-2. Run the individual convert code. You will need to change the path by hand in the script.
+converter = Converter(input_file="/path/to/input/file/or/dir", to_format="fbx", urdf_tmp_path="/tmp.pickle", blender_vis=False)
+converter.convert()
 ```
-blender --python blender_scripts/script.py
-blender --bachground --python blender_scripts/script.py
-```
++ Convert Other Format
+```python
+from model_format_converter.converter import Converter
 
-3. Use a high-level python script to control the blender scripts
-```
-# a single file
-python convert.py -f obj -t fbx -i xxx.obj -o xxx.fbx
-
-# a dir
-python convert.py -f obj -t fbx -id /path/to/input/models -od /python/to/output/models
-```
-
-## If blender is not required
-1. Run the individual convert code.
-
-2. Use a high-level python script to control non-blender scripts
-```
-python convert.py -t urdf -i xxx.obj
+converter = Converter(input_file="/path/to/input/file/or/dir", to_format="fbx", blender_vis=False)
+converter.convert()
 ```
