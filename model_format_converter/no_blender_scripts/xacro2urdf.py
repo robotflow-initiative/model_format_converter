@@ -41,7 +41,7 @@ import sys
 import xml.dom.minidom
 
 from copy import deepcopy
-from .xmlutils import opt_attrs, reqd_attrs, first_child_element, \
+from .xml_utils import opt_attrs, reqd_attrs, first_child_element, \
     next_sibling_element, replace_node
 
 

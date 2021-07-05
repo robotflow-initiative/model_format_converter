@@ -5,10 +5,10 @@ URDF is an important file format regarding robot-related tasks. We build some to
 ## Supported Format Convertion
 > notes: for these functionality with blender required, please install blender first, setup blender to work please refer to below.
 
-+ [x] obj2fbx: blender required
-+ [x] obj2dae: blender required
++ [x] obj2fbx/fbx2obj: blender required
++ [x] obj2dae/dae2obj: blender required
 + [x] obj2urdf
-+ [x] xacro2urdf
++ [ ] xacro2urdf
 + [ ] urdf2fbx: blender required
 + [ ] urdf2dae: blender required
 
