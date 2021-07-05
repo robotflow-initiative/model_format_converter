@@ -55,9 +55,12 @@ class Converter:
     def convert(self):
         # handle blender scripts
         blender_pair = {"obj":["fbx", "dae"], "urdf":["fbx", "dae"], "dae":["obj"], "fbx":["obj"]}
-        if self.to_format in blender_pair[self.from_format]:
-            self.blender_function_call()
-        else:
+        try:
+            if self.to_format in blender_pair[self.from_format]:
+                self.blender_function_call()
+            else:
+                self.no_blender_function_call(func=eval("{}2{}".format(self.from_format, self.to_format)))
+        except KeyError:
             self.no_blender_function_call(func=eval("{}2{}".format(self.from_format, self.to_format)))
 
     def blender_function_call_single(self, input_file, output_file):
